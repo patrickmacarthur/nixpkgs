@@ -1,0 +1,30 @@
+diff --git a/blackmagic-io-14.4.1a4/bm_util.c b/blackmagic-io-14.4.1a4/bm_util.c
+index 66751cb6f610..07276a47c500 100644
+--- a/blackmagic-io-14.4.1a4/bm_util.c
++++ b/blackmagic-io-14.4.1a4/bm_util.c
+@@ -469,7 +469,11 @@ bm_timer_t* bm_timer_alloc(bm_timer_callback_t callback, void* data)
+ 
+ void bm_timer_free(bm_timer_t* timer)
+ {
+-#if KERNEL_VERSION_OR_LATER(4, 15, 0)
++#if KERNEL_VERSION_OR_LATER(6, 15, 0)
++	struct bm_timer_wrapper* timer_wrapper = container_of(timer, struct bm_timer_wrapper, timer);
++	timer_delete(timer);
++	bm_kfree(timer_wrapper);
++#elif KERNEL_VERSION_OR_LATER(4, 15, 0)
+ 	struct bm_timer_wrapper* timer_wrapper = container_of(timer, struct bm_timer_wrapper, timer);
+ 	del_timer(timer);
+ 	bm_kfree(timer_wrapper);
+@@ -491,7 +495,11 @@ void bm_timer_expire_at(bm_timer_t* timer, uint64_t ns)
+ 
+ void bm_timer_cancel(bm_timer_t* timer)
+ {
++#if KERNEL_VERSION_OR_LATER(6, 15, 0)
++	timer_delete_sync(timer);
++#else
+ 	del_timer_sync(timer);
++#endif
+ }
+ 
+ // Event waiting
+

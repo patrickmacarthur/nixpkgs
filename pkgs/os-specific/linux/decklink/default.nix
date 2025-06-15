@@ -20,6 +20,7 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://aur.archlinux.org/cgit/aur.git/plain/01-update-makefiles.patch?h=decklink";
       hash = "sha256-l3iu0fG/QJMdGI/WSlNn+qjF4nK25JxoiwhPrMGTqE4=";
     })
+    ./blackmagic-del-timer.patch
   ];
 
   KERNELDIR = "${kernel.dev}/lib/modules/${kernel.modDirVersion}/build";
